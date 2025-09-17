@@ -26,7 +26,7 @@ export default function MedicationSearch() {
     }
   }, [isDropdownOpen]);
 
-  // Close dropdown when clicking outside or scrolling (but not inside dropdown)
+  // Close dropdown when clicking outside or scrolling (with better mobile handling)
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -35,20 +35,56 @@ export default function MedicationSearch() {
       }
     }
 
+    let scrollTimeout;
+    let isScrollingInDropdown = false;
+
     function handleScroll(event) {
-      if (isDropdownOpen && dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-        setSelectedIndex(-1);
+      // Check if scroll is happening within the dropdown
+      if (dropdownRef.current && dropdownRef.current.contains(event.target)) {
+        isScrollingInDropdown = true;
+        return; // Don't close if scrolling inside dropdown
+      }
+
+      // For mobile: Add delay before closing to allow for scroll momentum
+      if (isDropdownOpen) {
+        // Clear existing timeout
+        clearTimeout(scrollTimeout);
+        
+        // Only close after scroll has stopped for a bit
+        scrollTimeout = setTimeout(() => {
+          if (!isScrollingInDropdown) {
+            setIsDropdownOpen(false);
+            setSelectedIndex(-1);
+          }
+          isScrollingInDropdown = false;
+        }, 150); // 150ms delay - allows for natural scrolling
+      }
+    }
+
+    function handleTouchStart() {
+      // Reset the scrolling flag on touch start
+      isScrollingInDropdown = false;
+    }
+
+    function handleTouchMove(event) {
+      // Track if touch is happening within dropdown
+      if (dropdownRef.current && dropdownRef.current.contains(event.target)) {
+        isScrollingInDropdown = true;
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('scroll', handleScroll, true);
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: true });
     window.addEventListener('resize', handleScroll);
 
     return () => {
+      clearTimeout(scrollTimeout);
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('scroll', handleScroll, true);
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', handleScroll);
     };
   }, [isDropdownOpen]);
