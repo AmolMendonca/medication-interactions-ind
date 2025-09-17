@@ -17,29 +17,32 @@ export function useMedicationSearch(searchTerm) {
 
       const results = [];
 
-      // 1. Search Indian medicines first (instant, local)
+      // 1. Search Indian medicines first (but limit to 5 to leave room for international)
       if (indianMedicineAPI.isLoaded()) {
-        const indianResults = indianMedicineAPI.searchMedicines(debouncedSearchTerm, 8);
+        const indianResults = indianMedicineAPI.searchMedicines(debouncedSearchTerm, 5);
         results.push(...indianResults);
       }
 
-      // 2. Search RxNorm for US/international medicines (if we need more results)
-      if (results.length < 5) {
-        try {
-          const rxnormResults = await rxnormAPI.searchDrugs(debouncedSearchTerm);
-          // Add non-duplicate results
-          const newResults = rxnormResults.filter(rx => 
-            !results.some(indian => 
-              indian.name?.toLowerCase() === rx.name?.toLowerCase()
-            )
-          );
-          results.push(...newResults.slice(0, 5 - results.length));
-        } catch (error) {
-          console.warn('RxNorm search failed:', error);
-        }
+      // 2. Always search RxNorm for US/international medicines 
+      try {
+        const rxnormResults = await rxnormAPI.searchDrugs(debouncedSearchTerm);
+        // Add all RxNorm results (they're already limited to 10 in the service)
+        results.push(...rxnormResults);
+      } catch (error) {
+        console.warn('RxNorm search failed:', error);
       }
 
-      return results.slice(0, 10); // Limit total results
+      // 3. Remove duplicates based on similar names but keep both Indian and international versions
+      const uniqueResults = results.filter((item, index, arr) => {
+        // Keep if it's the first occurrence or if names are not too similar
+        const firstIndex = arr.findIndex(other => 
+          other.name?.toLowerCase().replace(/[^a-z]/g, '') === 
+          item.name?.toLowerCase().replace(/[^a-z]/g, '')
+        );
+        return index === firstIndex;
+      });
+
+      return uniqueResults.slice(0, 15); // Increased limit to show more options
     },
     enabled: debouncedSearchTerm.length >= 2,
     staleTime: 5 * 60 * 1000,

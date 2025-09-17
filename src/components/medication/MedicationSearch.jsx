@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Plus, Loader2, AlertCircle, Pill } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useMedicationSearch } from '../../hooks/useMedications';
 import { useMedicationContext } from '../../context/MedicationContext';
 
@@ -19,14 +19,14 @@ export default function MedicationSearch() {
     if (isDropdownOpen && searchRef.current) {
       const rect = searchRef.current.getBoundingClientRect();
       setDropdownPosition({
-        top: rect.bottom - 4, // Remove window.scrollY for fixed positioning
-        left: rect.left,      // Remove window.scrollX for fixed positioning
+        top: rect.bottom - 4,
+        left: rect.left,
         width: rect.width
       });
     }
   }, [isDropdownOpen]);
 
-  // Close dropdown when clicking outside or scrolling
+  // Close dropdown when clicking outside or scrolling (but not inside dropdown)
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -35,16 +35,16 @@ export default function MedicationSearch() {
       }
     }
 
-    function handleScroll() {
-      if (isDropdownOpen) {
+    function handleScroll(event) {
+      if (isDropdownOpen && dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
         setSelectedIndex(-1);
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('scroll', handleScroll, true); // Capture scroll events
-    window.addEventListener('resize', handleScroll); // Close on resize too
+    document.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('resize', handleScroll);
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -105,36 +105,25 @@ export default function MedicationSearch() {
     const parts = [];
     
     if (medication.isIndianMedicine) {
-      // Handle Indian medicine data
-      if (medication.manufacturer_name) {
-        parts.push(medication.manufacturer_name);
-      }
+      parts.push('Indian');
       if (medication.genericName) {
-        parts.push(`Generic: ${medication.genericName}`);
-      }
-      if (medication.formattedPrice) {
-        parts.push(medication.formattedPrice);
+        parts.push(medication.genericName);
       }
     } else {
-      // Handle US/RxNorm data
+      parts.push('International');
       if (medication.tty) {
         const ttyMap = {
           'SCD': 'Clinical Drug',
-          'SBD': 'Branded Drug',
-          'GPCK': 'Generic Pack',
-          'BPCK': 'Branded Pack'
+          'SBD': 'Branded Drug'
         };
         parts.push(ttyMap[medication.tty] || medication.tty);
-      }
-      if (medication.rxcui) {
-        parts.push(`RxCUI: ${medication.rxcui}`);
       }
     }
     
     return parts.join(' • ');
   };
-  
-    const handleInputFocus = () => {
+
+  const handleInputFocus = () => {
     if (searchTerm.length >= 2) {
       setIsDropdownOpen(true);
     }
@@ -142,18 +131,12 @@ export default function MedicationSearch() {
 
   return (
     <div className="relative w-full" ref={dropdownRef}>
-      {/* Search Input Container */}
+      {/* Clean Search Input */}
       <div className="relative">
-        {/* Search Icon */}
-        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
-          {isLoading ? (
-            <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />
-          ) : (
-            <Search className="h-5 w-5 text-gray-400" />
-          )}
+        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+          <Search className="h-4 w-4 text-gray-400" />
         </div>
         
-        {/* Input Field - Mobile optimized */}
         <input
           ref={searchRef}
           type="text"
@@ -161,17 +144,17 @@ export default function MedicationSearch() {
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={handleInputFocus}
-          placeholder="Search medications (e.g., aspirin, lisinopril)..."
+          placeholder="Search medications..."
           className="
-            w-full h-12 sm:h-14
-            pl-12 pr-4
-            text-sm sm:text-base
-            bg-gray-50 border border-gray-200
+            w-full h-12
+            pl-10 pr-10
+            text-base
+            bg-white
+            border border-gray-200
             rounded-xl
-            focus:bg-white focus:border-blue-300 focus:ring-4 focus:ring-blue-50
-            transition-all duration-200 ease-in-out
+            focus:border-gray-900 focus:ring-0 focus:outline-none
+            transition-colors duration-200
             placeholder:text-gray-400
-            shadow-sm
           "
           autoComplete="off"
           autoCapitalize="off"
@@ -189,25 +172,12 @@ export default function MedicationSearch() {
             }}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
-      {/* Error State */}
-      {error && (
-        <div className="mt-3 flex items-start space-x-2 text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
-          <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium">Search Error</p>
-            <p className="text-sm text-red-500 mt-1">Unable to search medications. Please check your connection and try again.</p>
-          </div>
-        </div>
-      )}
-
-      {/* Search Results Dropdown - Fixed portal positioning */}
+      {/* Minimal Dropdown */}
       {isDropdownOpen && searchTerm.length >= 2 && (
         <div 
           className="fixed z-50 pointer-events-none"
@@ -215,9 +185,8 @@ export default function MedicationSearch() {
         >
           <div 
             className="
-              absolute bg-white border border-gray-200 rounded-xl shadow-2xl
+              absolute bg-white border border-gray-200 rounded-xl shadow-lg
               max-h-80 overflow-hidden pointer-events-auto
-              backdrop-blur-sm
             "
             style={{
               top: `${dropdownPosition.top}px`,
@@ -226,9 +195,9 @@ export default function MedicationSearch() {
             }}
           >
             {isLoading ? (
-              <div className="p-6 text-center">
-                <Loader2 className="h-6 w-6 animate-spin mx-auto text-blue-500 mb-3" />
-                <p className="text-sm text-gray-600">Searching medications...</p>
+              <div className="p-4 text-center">
+                <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin mx-auto mb-2"></div>
+                <p className="text-sm text-gray-600">Searching...</p>
               </div>
             ) : searchResults?.length > 0 ? (
               <div className="overflow-y-auto max-h-80">
@@ -238,89 +207,47 @@ export default function MedicationSearch() {
                     onClick={() => handleSelectMedication(medication)}
                     className={`
                       w-full text-left p-4 
-                      transition-all duration-150 ease-in-out
+                      transition-colors duration-150
                       border-b border-gray-50 last:border-b-0
                       ${index === selectedIndex 
-                        ? 'bg-blue-50 border-blue-100' 
-                        : 'hover:bg-gray-50'
+                        ? 'bg-gray-50' 
+                        : 'hover:bg-gray-25'
                       }
                     `}
                   >
                     <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-3 flex-1 min-w-0">
-                        {/* Medication Icon */}
-                        <div className={`
-                          flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mt-0.5
-                          ${index === selectedIndex ? 'bg-blue-100' : 'bg-gray-100'}
-                        `}>
-                          <Pill className={`w-4 h-4 ${index === selectedIndex ? 'text-blue-600' : 'text-gray-500'}`} />
-                        </div>
-                        
-                        {/* Medication Info */}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm sm:text-base font-medium text-gray-900 truncate">
-                            {formatMedicationName(medication)}
-                          </p>
-                          {getMedicationSubtext(medication) && (
-                            <p className="text-xs sm:text-sm text-gray-500 mt-1 truncate">
-                              {getMedicationSubtext(medication)}
-                            </p>
-                          )}
-                        </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate mb-1">
+                          {formatMedicationName(medication)}
+                        </p>
+                        <p className="text-xs text-gray-500 truncate">
+                          {getMedicationSubtext(medication)}
+                        </p>
                       </div>
                       
-                      {/* Add Button */}
                       <div className="flex-shrink-0 ml-3">
-                        <div className={`
-                          w-6 h-6 rounded-full flex items-center justify-center transition-colors
-                          ${index === selectedIndex 
-                            ? 'bg-blue-500 text-white' 
-                            : 'bg-gray-200 text-gray-500'
-                          }
-                        `}>
-                          <Plus className="w-3 h-3" />
+                        <div className="w-5 h-5 border border-gray-300 rounded-full flex items-center justify-center">
+                          <div className="w-2 h-2 bg-gray-900 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </div>
                       </div>
                     </div>
                   </button>
                 ))}
               </div>
-            ) : searchTerm.length >= 2 ? (
-              <div className="p-6 text-center">
-                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Search className="w-5 h-5 text-gray-400" />
-                </div>
-                <p className="text-sm font-medium text-gray-900 mb-1">No medications found</p>
-                <p className="text-sm text-gray-500">
-                  Try searching for "{searchTerm}" using:
-                </p>
-                <div className="mt-2 text-xs text-gray-400 space-y-1">
-                  <p>• Generic names (aspirin, ibuprofen)</p>
-                  <p>• Brand names (Tylenol, Advil)</p>
-                  <p>• Check spelling and try shorter terms</p>
-                </div>
+            ) : (
+              <div className="p-4 text-center">
+                <p className="text-sm text-gray-600 mb-1">No results found</p>
+                <p className="text-xs text-gray-400">Try a different search term</p>
               </div>
-            ) : null}
+            )}
           </div>
         </div>
       )}
 
-      {/* Search Hints - Mobile friendly */}
-      {!searchTerm && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {['aspirin', 'lisinopril', 'metformin', 'tylenol'].map((hint) => (
-            <button
-              key={hint}
-              onClick={() => {
-                setSearchTerm(hint);
-                setIsDropdownOpen(true);
-                searchRef.current?.focus();
-              }}
-              className="px-3 py-1 text-xs bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors border border-blue-100"
-            >
-              Try "{hint}"
-            </button>
-          ))}
+      {/* Error State */}
+      {error && (
+        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-700">Unable to search medications</p>
         </div>
       )}
     </div>
