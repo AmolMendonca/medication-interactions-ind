@@ -1,9 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { HelmetProvider } from 'react-helmet-async'
 import MedicationSearch from './components/medication/MedicationSearch'
 import MedicationList from './components/medication/MedicationList'
 import InteractionResults from './components/interactions/InteractionResults'
-import SEOHead from './components/SEO/SEOHead'
+import useDocumentHead from './hooks/useDocumentHead'
 import { MedicationProvider, useMedicationContext } from './context/MedicationContext'
 
 const queryClient = new QueryClient({
@@ -20,13 +19,36 @@ const queryClient = new QueryClient({
 function AppContent() {
   const { medications, interactions } = useMedicationContext();
   
+  // Dynamic SEO based on user activity
+  const getDynamicTitle = () => {
+    if (medications.length > 0 && interactions.length > 0) {
+      return `${interactions.length} Drug Interactions Found | MedSure Checker`;
+    } else if (medications.length > 0) {
+      return `Checking ${medications.length} Medications | MedSure`;
+    }
+    return "MedSure - Free Drug Interaction Checker for Indian Medications";
+  };
+
+  const getDynamicDescription = () => {
+    if (medications.length > 0 && interactions.length > 0) {
+      return `Found ${interactions.length} potential drug interactions among your ${medications.length} medications. Get detailed analysis and safety recommendations.`;
+    } else if (medications.length > 0) {
+      return `Analyzing ${medications.length} medications for potential drug interactions. Get instant safety results for Indian medicines.`;
+    }
+    return "Check drug interactions between Indian medicines instantly. Free, safe, and accurate - includes Ayurvedic, allopathic, and homeopathic medications.";
+  };
+
+  // Update document head dynamically
+  useDocumentHead({
+    title: getDynamicTitle(),
+    description: getDynamicDescription(),
+    keywords: "drug interaction checker India, Indian medicines, medication safety, Ayurvedic medicine interactions, prescription checker",
+    ogTitle: getDynamicTitle(),
+    ogDescription: getDynamicDescription()
+  });
+  
   return (
     <>
-      <SEOHead 
-        medicationCount={medications.length}
-        interactionCount={interactions.length}
-      />
-      
       <div className="min-h-screen bg-gray-50">
           
           {/* iOS-style Header */}
@@ -101,13 +123,11 @@ function AppContent() {
 
 function App() {
   return (
-    <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <MedicationProvider>
-          <AppContent />
-        </MedicationProvider>
-      </QueryClientProvider>
-    </HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <MedicationProvider>
+        <AppContent />
+      </MedicationProvider>
+    </QueryClientProvider>
   )
 }
 

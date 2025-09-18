@@ -6,62 +6,23 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   
-  // Performance optimizations for better Core Web Vitals
+  // Simple build configuration for reliable deployment
   build: {
-    // Enable minification
-    minify: 'terser',
+    // Use esbuild for faster builds (default)
+    minify: 'esbuild',
     
-    // Optimize chunk splitting for better caching
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          // Vendor chunks
-          'react-vendor': ['react', 'react-dom'],
-          'query-vendor': ['@tanstack/react-query'],
-          'ui-vendor': ['lucide-react'],
-          
-          // App chunks
-          'medication-components': [
-            './src/components/medication/MedicationSearch.jsx',
-            './src/components/medication/MedicationList.jsx'
-          ],
-          'interaction-components': [
-            './src/components/interactions/InteractionResults.jsx',
-            './src/components/interactions/InteractionCard.jsx'
-          ],
-          'services': [
-            './src/services/hybridInteractionService.js',
-            './src/services/knownInteractions.js',
-            './src/services/openFDAInteractionService.js'
-          ]
-        }
-      }
-    },
-    
-    // Optimize bundle size
+    // Basic optimization
     target: 'es2020',
     cssCodeSplit: true,
-    sourcemap: false, // Disable in production for smaller builds
+    sourcemap: false,
     
     // Compress assets
-    assetsInlineLimit: 4096 // Inline small assets
+    assetsInlineLimit: 4096
   },
   
   // Server configuration for development
   server: {
-    // Enable compression
-    compress: true,
-    
-    // CORS for API calls
-    cors: true,
-    
-    // Performance headers
-    headers: {
-      'Cache-Control': 'public, max-age=31536000',
-      'X-Content-Type-Options': 'nosniff',
-      'X-Frame-Options': 'DENY',
-      'X-XSS-Protection': '1; mode=block'
-    }
+    cors: true
   },
   
   // Optimize dependencies
@@ -70,13 +31,7 @@ export default defineConfig({
       'react',
       'react-dom',
       '@tanstack/react-query',
-      'lucide-react',
-      'react-helmet-async'
+      'lucide-react'
     ]
-  },
-  
-  // Define environment variables
-  define: {
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version)
   }
 })
