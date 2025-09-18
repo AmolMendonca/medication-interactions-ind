@@ -118,33 +118,42 @@ export function useInteractionCheck() {
     setError(null);
     
     try {
-      // Import the OpenFDA service
-      const { openFDAInteractionService } = await import('../services/openfdaInteractions');
+      // Import the hybrid interaction service
+      const { hybridInteractionService } = await import('../services/hybridInteractionService');
       
-      // Check interactions using OpenFDA adverse events analysis
-      const result = await openFDAInteractionService.checkMultipleDrugInteractions(medications);
+      // Check interactions using comprehensive multi-source analysis
+      const result = await hybridInteractionService.checkMultipleDrugInteractions(medications);
       
-      // Convert OpenFDA results to match existing InteractionCard format
-      const formattedInteractions = result.interactions.map(interaction => ({
-        medication1: interaction.medication1,
-        medication2: interaction.medication2,
-        interactions: interaction.interaction.interactions.map(reaction => ({
-          severity: reaction.severity,
-          description: reaction.description,
-          source: 'OpenFDA Adverse Events Analysis',
-          methodology: 'Adverse event co-occurrence analysis',
-          confidence: interaction.interaction.confidence,
-          reportCount: interaction.interaction.reportCount,
-          reactionName: reaction.reaction,
-          elevationFactor: reaction.elevationFactor
+      // Convert results to match existing InteractionCard format
+      const formattedInteractions = result.interactions.map(interactionPair => ({
+        medication1: interactionPair.medication1,
+        medication2: interactionPair.medication2,
+        interactions: interactionPair.interactions.map(interaction => ({
+          severity: interaction.severity,
+          description: interaction.description,
+          source: interaction.source,
+          methodology: interaction.methodology,
+          confidence: interaction.confidence,
+          reportCount: interaction.reportCount,
+          reactionName: interaction.reactionName,
+          elevationFactor: interaction.elevationFactor,
+          mechanism: interaction.mechanism,
+          clinicalEffects: interaction.clinicalEffects,
+          monitoring: interaction.monitoring,
+          recommendation: interaction.recommendation,
+          evidenceLevel: interaction.evidenceLevel
         })),
-        pairId: interaction.pairId
+        pairId: interactionPair.pairId,
+        overallSeverity: interactionPair.severity,
+        confidence: interactionPair.confidence,
+        sources: interactionPair.sources,
+        safeCombination: interactionPair.safeCombination // Include safe combination info
       }));
       
       setInteractions(formattedInteractions);
     } catch (error) {
       setError(`Interaction analysis failed: ${error.message}`);
-      console.error('OpenFDA interaction check error:', error);
+      console.error('Hybrid interaction check error:', error);
     } finally {
       setIsChecking(false);
     }

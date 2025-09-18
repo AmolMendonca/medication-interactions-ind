@@ -20,46 +20,52 @@ function App() {
       <MedicationProvider>
         <div className="min-h-screen bg-gray-50">
           
-          {/* Minimal Header */}
-          <header className="bg-white border-b border-gray-100">
-            <div className="max-w-2xl mx-auto px-4 py-6">
-              <h1 className="text-2xl font-semibold text-gray-900 text-center">
-                MedCheck
-              </h1>
-              <p className="text-sm text-gray-500 text-center mt-1">
-                Drug interaction checker
-              </p>
+          {/* iOS-style Header */}
+          <header className="bg-white/95 backdrop-blur-2xl border-b border-gray-200/40 sticky top-0 z-50 safe-area-top">
+            <div className="max-w-sm mx-auto">
+              {/* Status Bar Space */}
+              <div className="h-11"></div>
+              
+              {/* Navigation Bar */}
+              <div className="px-4 pb-3">
+                <div className="text-center">
+                  {/* Large Title - iOS Style */}
+                  <h1 className="text-[34px] font-bold text-black tracking-tight leading-[40px] -mb-1">
+                    MedSure
+                  </h1>
+                  <p className="text-[17px] text-gray-600 font-normal leading-[22px]">
+                    Drug Interaction Checker
+                  </p>
+                </div>
+              </div>
             </div>
           </header>
 
-          {/* Main Content */}
-          <main className="max-w-2xl mx-auto px-4 py-6 space-y-8">
+          {/* Main Content Container */}
+          <main className="max-w-sm mx-auto px-4 pb-8">
             
             {/* Search Section */}
-            <section>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">
-                Add medications
-              </h2>
+            <section className="pt-4">
               <MedicationSearch />
             </section>
 
             {/* Medication List */}
-            <section>
+            <section className="mt-8">
               <MedicationList />
             </section>
 
             {/* Interactions */}
-            <section>
+            <section className="mt-8">
               <InteractionResults />
             </section>
 
           </main>
 
-          {/* Minimal Footer */}
-          <footer className="max-w-2xl mx-auto px-4 py-8 mt-16">
-            <div className="bg-gray-100 rounded-xl p-4">
-              <p className="text-xs text-gray-600 text-center">
-                This tool provides general information only. Always consult your healthcare provider.
+          {/* iOS-style Footer */}
+          <footer className="max-w-sm mx-auto px-4 pb-8 safe-area-bottom">
+            <div className="bg-gray-100/60 rounded-2xl p-4 border border-gray-200/40">
+              <p className="text-[13px] text-gray-500 text-center leading-[18px]">
+                For informational purposes only. Always consult your healthcare provider for medical advice.
               </p>
             </div>
           </footer>
