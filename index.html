@@ -2,12 +2,167 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    
+    <!-- Primary Meta Tags -->
+    <title>MedSure - Free Drug Interaction Checker for Indian Medications | Check Medicine Safety</title>
+    <meta name="title" content="MedSure - Free Drug Interaction Checker for Indian Medications | Check Medicine Safety" />
+    <meta name="description" content="Free online drug interaction checker for Indian medicines. Check interactions between Ayurvedic, allopathic, and homeopathic medications. Safe, fast, and accurate - designed for India." />
+    <meta name="keywords" content="drug interaction checker India, medicine interaction, Indian medicines, medication safety, drug checker, medicine compatibility, pharmaceutical interactions, prescription safety, ayurvedic medicine interactions, Indian pharmacy" />
+    <meta name="author" content="MedSure" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="geo.region" content="IN" />
+    <meta name="geo.country" content="India" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://medsure.info/" />
+    <meta property="og:title" content="MedSure - Free Drug Interaction Checker for Indian Medications" />
+    <meta property="og:description" content="Check interactions between your medications safely and instantly. Designed specifically for Indian medicines including Ayurvedic, allopathic, and homeopathic treatments." />
+    <meta property="og:image" content="https://medsure.info/og-image.jpg" />
+    <meta property="og:site_name" content="MedSure" />
+    <meta property="og:locale" content="en_IN" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://medsure.info/" />
+    <meta property="twitter:title" content="MedSure - Free Drug Interaction Checker for Indian Medications" />
+    <meta property="twitter:description" content="Check interactions between your medications safely and instantly. Designed specifically for Indian medicines." />
+    <meta property="twitter:image" content="https://medsure.info/twitter-image.jpg" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#3B82F6" />
+    <meta name="msapplication-TileColor" content="#3B82F6" />
+    
+    <!-- PWA Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="MedSure" />
+    
+    <!-- Medical/Health Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalWebPage",
+      "name": "MedSure - Drug Interaction Checker",
+      "description": "Free online drug interaction checker for Indian medications. Check safety and compatibility of medicines including Ayurvedic, allopathic, and homeopathic treatments.",
+      "url": "https://medsure.info",
+      "inLanguage": "en-IN",
+      "about": {
+        "@type": "MedicalCondition",
+        "name": "Drug Interactions"
+      },
+      "audience": {
+        "@type": "PeopleAudience",
+        "geographicArea": {
+          "@type": "Country",
+          "name": "India"
+        }
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "MedSure",
+        "url": "https://medsure.info",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://medsure.info/logo.png"
+        }
+      },
+      "medicalAudience": [
+        {
+          "@type": "MedicalAudience",
+          "audienceType": "Patient"
+        },
+        {
+          "@type": "MedicalAudience", 
+          "audienceType": "MedicalResearcher"
+        }
+      ],
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+      }
+    }
+    </script>
+    
+    <!-- WebApp Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "MedSure Drug Interaction Checker",
+      "description": "Check drug interactions for Indian medications instantly",
+      "url": "https://medsure.info",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+      },
+      "countriesSupported": "IN",
+      "inLanguage": "en-IN"
+    }
+    </script>
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://medsure.info/" />
+    
+    <!-- Disclaimer for Medical Content -->
+    <meta name="medical-disclaimer" content="This tool provides general information only and is not a substitute for professional medical advice. Always consult your healthcare provider." />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Structured Data for Indian Healthcare -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is MedSure safe to use for checking Indian medicines?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, MedSure is designed specifically for Indian medications including Ayurvedic, allopathic, and homeopathic medicines. However, always consult your doctor for medical advice."
+          }
+        },
+        {
+          "@type": "Question", 
+          "name": "Does MedSure work with Ayurvedic medicines?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, MedSure includes a comprehensive database of Indian medicines including Ayurvedic, Unani, Siddha, and modern allopathic medications."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this drug interaction checker free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, MedSure is completely free to use. No registration or payment required to check drug interactions."
+          }
+        }
+      ]
+    }
+    </script>
   </body>
 </html>

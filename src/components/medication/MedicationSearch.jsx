@@ -180,7 +180,7 @@ export default function MedicationSearch() {
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={handleInputFocus}
-          placeholder="Search medications..."
+          placeholder="Search Indian medicines (e.g., Crocin, Dolo, Ayurvedic herbs)..."
           className="
             w-full h-[44px]
             pl-10 pr-10

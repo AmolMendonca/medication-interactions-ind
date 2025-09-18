@@ -1,8 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { HelmetProvider } from 'react-helmet-async'
 import MedicationSearch from './components/medication/MedicationSearch'
 import MedicationList from './components/medication/MedicationList'
 import InteractionResults from './components/interactions/InteractionResults'
-import { MedicationProvider } from './context/MedicationContext'
+import SEOHead from './components/SEO/SEOHead'
+import { MedicationProvider, useMedicationContext } from './context/MedicationContext'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,11 +16,18 @@ const queryClient = new QueryClient({
   },
 });
 
-function App() {
+// Main content component that can use medication context
+function AppContent() {
+  const { medications, interactions } = useMedicationContext();
+  
   return (
-    <QueryClientProvider client={queryClient}>
-      <MedicationProvider>
-        <div className="min-h-screen bg-gray-50">
+    <>
+      <SEOHead 
+        medicationCount={medications.length}
+        interactionCount={interactions.length}
+      />
+      
+      <div className="min-h-screen bg-gray-50">
           
           {/* iOS-style Header */}
           <header className="bg-white/95 backdrop-blur-2xl border-b border-gray-200/40 sticky top-0 z-50 safe-area-top">
@@ -71,8 +80,34 @@ function App() {
           </footer>
 
         </div>
-      </MedicationProvider>
-    </QueryClientProvider>
+        
+        {/* Hidden SEO Content for Indian Drug Terms */}
+        <div className="sr-only">
+          <h2>Indian Medication Database</h2>
+          <p>Comprehensive drug interaction checker supporting over 250,000 Indian medications including:</p>
+          <ul>
+            <li>Ayurvedic medicines and herbal supplements</li>
+            <li>Allopathic prescription drugs available in India</li>
+            <li>Over-the-counter medications like Crocin, Dolo, Sinarest</li>
+            <li>Traditional Indian medicines - Unani, Siddha, Homeopathic</li>
+            <li>Generic and branded medications from Indian pharmaceutical companies</li>
+          </ul>
+          <h3>Common Indian Medicine Interactions</h3>
+          <p>Check interactions for popular Indian brands: Combiflam, Zerodol, Cheston Cold, D-Cold Total, Liv-52, Triphala, Ashwagandha, Brahmi, and more.</p>
+        </div>
+      </>
+    );
+}
+
+function App() {
+  return (
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <MedicationProvider>
+          <AppContent />
+        </MedicationProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   )
 }
 
