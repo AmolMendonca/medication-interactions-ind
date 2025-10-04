@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { MedicationProvider } from './context/MedicationContext'
 import AuthForm from './components/auth/AuthForm'
-import UserMenu from './components/auth/UserMenu'
+import Header from './components/layout/Header'
 import MedicationSearch from './components/medication/MedicationSearch'
 import MedicationList from './components/medication/MedicationList'
 import InteractionResults from './components/interactions/InteractionResults'
@@ -41,25 +41,11 @@ function MainApp() {
   return (
     <div className="min-h-screen bg-gray-50">
       
-      {/* Header with User Menu */}
-      <header className="bg-white border-b border-gray-100">
-        <div className="max-w-2xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="text-center flex-1">
-              <h1 className="text-2xl font-semibold text-gray-900">
-                MedCheck
-              </h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Drug interaction checker
-              </p>
-            </div>
-            <UserMenu />
-          </div>
-        </div>
-      </header>
+      {/* Header with User Menu - Radix UI Enhanced */}
+      <Header />
 
       {/* Main Content */}
-      <main className="max-w-2xl mx-auto px-4 py-6 space-y-8">
+      <main className="max-w-2xl mx-auto px-4 pt-2 pb-6 space-y-8">
         
         {/* Search Section */}
         <section>
